@@ -26,7 +26,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cpp_histogram_filter_project.cpp">
+    <ClCompile Include="histogram_filter_project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
