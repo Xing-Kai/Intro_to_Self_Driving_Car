@@ -44,15 +44,14 @@ vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
 	// your code here
   int height = grid.size();
   int width = grid[0].size();
-  int area = height * width;
-  float belief_per_cell = 1.0 / area;
+  float belief_per_cell = 1.0 / (height * width);
 
   vector <float> row_of_newGrid;
+
+  for (int column = 0; column < width; column++) {
+      row_of_newGrid.push_back(belief_per_cell);
+    }
 	for (int row = 0; row < height; row++) {
-      row_of_newGrid.clear();
-      for (int column = 0; column < width; column++) {
-        row_of_newGrid.push_back(belief_per_cell);
-      }
       newGrid.push_back(row_of_newGrid);
   }
 
@@ -108,13 +107,22 @@ vector< vector <float> > sense(char color,
   int height = beliefs.size();
   int width = beliefs[0].size();
   vector <float> row_of_newGrid;
+
+  
+
   for (int row = 0; row < height; row++) {
-        row_of_newGrid.clear();
-        for (int column = 0; column < width; column++) {
-          bool hit = ( color == grid[row][column]);
-          row_of_newGrid.push_back(beliefs[row][column] * (hit * p_hit + (1 - hit) * p_miss));
-        }
-        newGrid.push_back(row_of_newGrid);
+    row_of_newGrid.clear();
+    int hit = 1;
+    for (int column = 0; column < width; column++) {
+      if (color == grid[row][column]){
+        hit = 1;
+      }
+      else{
+        hit = 0;
+      }
+      row_of_newGrid.push_back(beliefs[row][column] * (hit * p_hit + (1 - hit) * p_miss));
+    }
+    newGrid.push_back(row_of_newGrid);
   }
 
 	return normalize(newGrid);
