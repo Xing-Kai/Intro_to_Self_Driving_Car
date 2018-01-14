@@ -11,12 +11,12 @@
 
 #include "localizer.cpp"
 #include <algorithm>
-//#include "helpers.cpp"
+#include "helpers.cpp"
 
 class Simulation {
 	
 private:
-	vector <char> get_colors() {
+	vector <char> get_colors(vector< vector <float> > &grid) {
 		vector <char> all_colors;
 		char color;
 		int i,j;
