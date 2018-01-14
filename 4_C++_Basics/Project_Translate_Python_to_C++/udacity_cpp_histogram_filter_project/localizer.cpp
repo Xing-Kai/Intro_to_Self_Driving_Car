@@ -38,7 +38,7 @@ using namespace std;
            0.25 0.25
            0.25 0.25
 */
-vector< vector <float> > initialize_beliefs(vector< vector <char> > &grid) {
+vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
 	vector< vector <float> > newGrid;
 
 	// your code here
@@ -95,28 +95,31 @@ vector< vector <float> > initialize_beliefs(vector< vector <char> > &grid) {
     	   representing the updated beliefs for the robot. 
 */
 vector< vector <float> > sense(char color, 
-	vector< vector <char> > &grid, 
-	vector< vector <float> > &beliefs, 
+	vector< vector <char> > grid, 
+	vector< vector <float> > beliefs, 
 	float p_hit,
 	float p_miss) 
 {
   
+  vector< vector <float> > newGrid;
+
   // your code here
   int height = beliefs.size();
   int width = beliefs[0].size();
+  newGrid = zeros(height, width);
 
   for (int row = 0; row < height; row++) {
     for (int column = 0; column < width; column++) {
       if (grid[row][height] == color) {
-              beliefs[row][height] = beliefs[row][height] * p_hit;
+        newGrid[row][height] = beliefs[row][height] * p_hit;
       }
       else {
-        beliefs[row][height] = beliefs[row][height] * p_miss;
+        newGrid[row][height] = beliefs[row][height] * p_miss;
       }
     }
   }
 
-	return normalize(beliefs);
+  return normalize(newGrid);
 }
 
 
@@ -158,22 +161,25 @@ vector< vector <float> > sense(char color,
     	   representing the updated beliefs for the robot. 
 */
 vector< vector <float> > move(int dy, int dx, 
-	vector < vector <float> > &beliefs,
+	vector < vector <float> > beliefs,
 	float blurring) 
 {
-  vector < vector <float> > newGrid = zeros(height, width);
+  
 
 	// your code here
   int height = beliefs.size();
   int width = beliefs[0].size();
   int row, column, new_row, new_column;
+
+  vector < vector <float> > newGrid = zeros(height, width);
+
   for (row = 0; row < height; row++) {
     for (column = 0; column < width; column++) {
-          new_row = (row + dy + height) % height;
-          new_column = (column + dx + width) % width;
+          new_row = (row + dy) % height;
+          new_column = (column + dx) % width;
           newGrid[new_row][new_column] = beliefs[row][column];
     }
   }
 
-	return blur(newGrid, blurring);
+	return newGrid;
 }

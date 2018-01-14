@@ -32,22 +32,7 @@ using namespace std;
     	   all probabilities is equal to one.
 */
 
-vector < vector <float> > zeros(int height, int width) {
-	// OPTIMIZATION: Reserve space in memory for vectors
-	vector < vector <float> > newGrid;
-  	newGrid.reserve(height);
-	vector <float> newRow;
-  	newRow.assign(width, 0);
-
-  	// OPTIMIZATION: nested for loop not needed
-    // because every row in the matrix is exactly the same
-	for (int i=0; i<height; i++) {
-		newGrid.push_back(newRow);
-	}
-	return newGrid;
-}
-
-vector< vector<float> > normalize(vector< vector <float> > &grid) {
+vector< vector<float> > normalize(vector< vector <float> > grid) {
 	
 	// todo - your code here
 	float total = 0.0;
@@ -103,13 +88,25 @@ vector< vector<float> > normalize(vector< vector <float> > &grid) {
     @return - a new normalized two dimensional grid where probability 
     	   has been blurred.
 */
-vector < vector <float> > blur(vector < vector < float> > &grid, float blurring) {
+vector < vector <float> > blur(vector < vector < float> > grid, float blurring) {
 
 	// your code here
 	int height = grid.size();
 	int width = grid[0].size();
 
-	vector< vector <float> > newGrid = zeros(height, width);
+	int i, j;
+	vector < vector <float> > newGrid;
+	newGrid.reserve(height);
+	vector <float> newRow;
+	newRow.reserve(width);
+
+	for (i=0; i<height; i++) {
+		newRow.clear();
+		for (j=0; j<width; j++) {
+			newRow.push_back(0.0);
+		}
+		newGrid.push_back(newRow);
+	}
 
 	static float center = 1.0 - blurring;
 	static float corner = blurring / 12.0;
