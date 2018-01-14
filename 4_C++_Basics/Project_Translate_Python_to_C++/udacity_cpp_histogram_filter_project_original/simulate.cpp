@@ -11,12 +11,12 @@
 
 #include "localizer.cpp"
 #include <algorithm>
-//#include "helpers.cpp"
+// #include "helpers.cpp"
 
 class Simulation {
 	
 private:
-	vector <char> get_colors(vector< vector <float> > &grid) {
+	vector <char> get_colors() {
 		vector <char> all_colors;
 		char color;
 		int i,j;
@@ -78,38 +78,36 @@ You can test your code by running this function.
 Do that by first compiling this file and then 
 running the output.
 */
-/**
-	int main() {
+// int main() {
 	
-	vector < vector <char> > map;
- 	vector <char> mapRow;
- 	int i, j, randInt;
- 	char color;
- 	std::vector<int> pose(2);
+// 	vector < vector <char> > map;
+// 	vector <char> mapRow;
+// 	int i, j, randInt;
+// 	char color;
+// 	std::vector<int> pose(2);
 
- 	for (i = 0; i < 4; i++)
- 	{
- 		mapRow.clear();
- 		for (j=0; j< 4; j++)
- 		{
- 			randInt = rand() % 2;
- 			if (randInt == 0 ) {
- 				color = 'r';
- 			} 
- 			else {
- 				color = 'g';
- 			}
- 			mapRow.push_back(color);
- 		}
- 		map.push_back(mapRow);
- 	}
- 	cout << "map is\n";
- 	Simulation simulation (map, 0.1, 0.9, pose);
- 	// simulation = Simulation(map, 0.1, 0.9, pose);
- 	cout << "initialization success!\n";
- 	show_grid(map);
+// 	for (i = 0; i < 4; i++)
+// 	{
+// 		mapRow.clear();
+// 		for (j=0; j< 4; j++)
+// 		{
+// 			randInt = rand() % 2;
+// 			if (randInt == 0 ) {
+// 				color = 'r';
+// 			} 
+// 			else {
+// 				color = 'g';
+// 			}
+// 			mapRow.push_back(color);
+// 		}
+// 		map.push_back(mapRow);
+// 	}
+// 	cout << "map is\n";
+// 	Simulation simulation (map, 0.1, 0.9, pose);
+// 	// simulation = Simulation(map, 0.1, 0.9, pose);
+// 	cout << "initialization success!\n";
+// 	show_grid(map);
 
- 	cout << "x, y = (" << simulation.true_pose[0] << ", " << simulation.true_pose[1] << ")" << endl;
- 	return 0;
- 	}
-*/
+// 	cout << "x, y = (" << simulation.true_pose[0] << ", " << simulation.true_pose[1] << ")" << endl;
+// 	return 0;
+// }
