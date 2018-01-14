@@ -31,25 +31,27 @@ using namespace std;
     @return - a new normalized two dimensional grid where the sum of 
     	   all probabilities is equal to one.
 */
-vector< vector<float> > normalize(vector< vector <float> > grid) {
+vector< vector<float> > normalize(vector< vector <float> > &grid) {
 	
-	vector< vector<float> > newGrid;
-
 	// todo - your code here
-  	int height = grid.size();
-  	int width = grid[0].size();
-  	float total = 0.0;
-  	for (int row = 0; row < height; row++) {
-        for (int column = 0; column < width; column++) {
-        	total += grid[row][column];
-      }
-      }
-  	for (int row = 0; row < height; row++) {
-        for (int column = 0; column < width; column++) {
-        	newGrid[row][column] = grid[row][column] / total;
-      }
-      }     
-	return newGrid;
+	float total = 0.0;
+	int height = grid.size();
+	int width = grid[0].size();
+	int i, j;
+
+	for (i = 0; i < height; i++){
+		for (j=0; j< width; j++){
+			total += grid[i][j];
+		}
+	}
+
+	for (i = 0; i < height; i++) {
+		for (j=0; j< width; j++) {
+			grid[i][j] = grid[i][j] / total;
+		}
+	}
+
+	return grid;
 }
 
 /**
@@ -85,7 +87,7 @@ vector< vector<float> > normalize(vector< vector <float> > grid) {
     @return - a new normalized two dimensional grid where probability 
     	   has been blurred.
 */
-vector < vector <float> > blur(vector < vector < float> > grid, float blurring) {
+vector < vector <float> > blur(vector < vector < float> > &grid, float blurring) {
 
 	vector < vector <float> > newGrid;
 	
@@ -93,32 +95,41 @@ vector < vector <float> > blur(vector < vector < float> > grid, float blurring) 
 	int height = grid.size();
 	int width = grid[0].size();
 
-	float center_prob = 1.0 - blurring;
-	float corner_prob = blurring / 12.0;
-	float adjacent_prob = blurring / 6.0;
+	static float center = 1.0 - blurring;
+	static float corner = blurring / 12.0;
+	static float adjacent = blurring / 6.0;
+  	// OPTIMIZATION: window, DX and  DY variables have the 
+    // same value each time the function is run.
+  	// It's very inefficient to recalculate the vectors
+    // every time the function runs. 
+    // Define and declare window, DX, and DY using the
+    // bracket syntax: vector<int> foo = {1, 2, 3, 4} 
+    // instead of calculating these vectors with for loops 
+    // and push back
+    static vector < vector <float> > window = {{corner, adjacent, corner}, {adjacent, center, adjacent}, {corner, adjacent, corner}};
+	static vector <int> DX = {-1, 0, 1};
+	static vector <int> DY = {-1, 0, 1};
 
-	std::vector<std::vector<float> > window { { corner_prob, adjacent_prob, corner_prob },
-                                    { adjacent_prob, center_prob, adjacent_prob } ,
-                                	{ corner_prob, adjacent_prob, corner_prob }};
-  	
-  	for (int row = 0; row < height; row++) {
-        for (int column = 0; column < width; column++) {
-        	newGrid[row][column] = 0;
-      	}
-	}
+	int ii;
+	int jj;
+	int new_i;
+	int new_j;
+	float multiplier;
 
-  	for (int row = 0; row < height; row++) {
-        for (int column = 0; column < width; column++) {
-        	float grid_val = grid[row][column];
-        	for (int dx = -1; dx < 2; dx++) {
-        		for (int dy = -1; dy < 2; dx++) {
-        			float mult = window[dx + 1][dy + 1];
-        			int newGrid_row = (row + dy) % height;
-        			int newGrid_column = (column + dx) % width;
-        			newGrid[newGrid_row][newGrid_column] += mult * grid_val;
-        		}
-        	}
-        }
+	// OPTIMIZATION: Use your improved zeros function
+  	vector < vector <float> > newGrid = zeros(height, width);
+
+	for (int i=0; i< height; i++ ) {
+		for (int j=0; j<width; j++ ) {
+			for (ii=0; ii<3; ii++) {
+				for (jj=0; jj<3; jj++) {
+					new_i = (i + DY[ii] + height) % height;
+					new_j = (j + DX[jj] + width) % width;
+					multiplier = window[ii][jj];
+					newGrid[new_i][new_j] += grid[i][j] * multiplier;
+				}
+			}
+		}
 	}
 
 

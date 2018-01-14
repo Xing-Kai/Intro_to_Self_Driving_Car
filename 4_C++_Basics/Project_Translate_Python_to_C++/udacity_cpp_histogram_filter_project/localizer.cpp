@@ -38,24 +38,23 @@ using namespace std;
            0.25 0.25
            0.25 0.25
 */
-vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
+vector< vector <float> > initialize_beliefs(vector< vector <char> > &grid) {
 	vector< vector <float> > newGrid;
 
 	// your code here
   int height = grid.size();
   int width = grid[0].size();
-  float belief_per_cell = 1.0 / (height * width);
-
-  vector <float> row_of_newGrid;
-
-  for (int column = 0; column < width; column++) {
-      row_of_newGrid.push_back(belief_per_cell);
-    }
-	for (int row = 0; row < height; row++) {
-      newGrid.push_back(row_of_newGrid);
+  newGrid.reserve(height);
+  vector<float> newRow;
+  
+  float prob_per_cell = 1.0 / ( (float) height * width) ;
+  newRow.assign(width, prob_per_cell);
+  // OPTIMIZATION: Is there a way to get the same results   
+  // without nested for loops?
+  for (int i=0; i<height; i++) {
+    newGrid.push_back(newRow);
   }
-
-	return newGrid;
+  return newGrid;
 }
 
 /**
@@ -96,36 +95,28 @@ vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
     	   representing the updated beliefs for the robot. 
 */
 vector< vector <float> > sense(char color, 
-	vector< vector <char> > grid, 
-	vector< vector <float> > beliefs, 
+	vector< vector <char> > &grid, 
+	vector< vector <float> > &beliefs, 
 	float p_hit,
 	float p_miss) 
 {
-	vector< vector <float> > newGrid;
-
-	// your code here
+  
+  // your code here
   int height = beliefs.size();
   int width = beliefs[0].size();
-  vector <float> row_of_newGrid;
-
-  
 
   for (int row = 0; row < height; row++) {
-    row_of_newGrid.clear();
-    int hit = 1;
     for (int column = 0; column < width; column++) {
-      if (color == grid[row][column]){
-        hit = 1;
+      if (grid[i][j] == color) {
+              beliefs[i][j] = beliefs[i][j] * p_hit;
       }
-      else{
-        hit = 0;
+      else {
+        beliefs[i][j] = beliefs[i][j] * p_miss;
       }
-      row_of_newGrid.push_back(beliefs[row][column] * (hit * p_hit + (1 - hit) * p_miss));
     }
-    newGrid.push_back(row_of_newGrid);
   }
 
-	return normalize(newGrid);
+	return normalize(beliefs);
 }
 
 
@@ -167,24 +158,22 @@ vector< vector <float> > sense(char color,
     	   representing the updated beliefs for the robot. 
 */
 vector< vector <float> > move(int dy, int dx, 
-	vector < vector <float> > beliefs,
+	vector < vector <float> > &beliefs,
 	float blurring) 
 {
-
-	vector < vector <float> > newGrid;
+  vector < vector <float> > newGrid = zeros(height, width);
 
 	// your code here
   int height = beliefs.size();
   int width = beliefs[0].size();
-  int new_row = 0;
-  int new_column = 0;
-  for (int row = 0; row < height; row++) {
-        for (int column = 0; column < width; column++) {
-          new_row = (row + dy) % height;
-          new_column = (column + dx) % width;
+  int row, column, new_row, new_column;
+  for (row = 0; row < height; row++) {
+    for (column = 0; column < width; column++) {
+          new_row = (row + dy + height) % height;
+          new_column = (column + dx + width) % width;
           newGrid[new_row][new_column] = beliefs[row][column];
-      }
-      }
+    }
+  }
 
 	return blur(newGrid, blurring);
 }
