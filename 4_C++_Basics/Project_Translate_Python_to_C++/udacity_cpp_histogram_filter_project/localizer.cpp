@@ -107,11 +107,11 @@ vector< vector <float> > sense(char color,
 
   for (int row = 0; row < height; row++) {
     for (int column = 0; column < width; column++) {
-      if (grid[i][j] == color) {
-              beliefs[i][j] = beliefs[i][j] * p_hit;
+      if (grid[row][height] == color) {
+              beliefs[row][height] = beliefs[row][height] * p_hit;
       }
       else {
-        beliefs[i][j] = beliefs[i][j] * p_miss;
+        beliefs[row][height] = beliefs[row][height] * p_miss;
       }
     }
   }
