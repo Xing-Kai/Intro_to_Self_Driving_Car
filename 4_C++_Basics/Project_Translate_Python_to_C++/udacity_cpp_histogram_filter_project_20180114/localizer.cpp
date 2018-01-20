@@ -39,8 +39,8 @@ using namespace std;
            0.25 0.25
 */
 vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
-	vector< vector <float> > newGrid;
-
+	
+  vector< vector <float> > newGrid;
 	// your code here
   int height = grid.size();
   int width = grid[0].size();
@@ -48,9 +48,8 @@ vector< vector <float> > initialize_beliefs(vector< vector <char> > grid) {
   vector<float> newRow;
   
   float prob_per_cell = 1.0 / ( (float) height * width) ;
+
   newRow.assign(width, prob_per_cell);
-  // OPTIMIZATION: Is there a way to get the same results   
-  // without nested for loops?
   for (int i=0; i<height; i++) {
     newGrid.push_back(newRow);
   }
@@ -110,11 +109,11 @@ vector< vector <float> > sense(char color,
 
   for (int row = 0; row < height; row++) {
     for (int column = 0; column < width; column++) {
-      if (grid[row][height] == color) {
-        newGrid[row][height] = beliefs[row][height] * p_hit;
+      if (grid[row][column] == color) {
+        newGrid[row][column] = beliefs[row][column] * p_hit;
       }
       else {
-        newGrid[row][height] = beliefs[row][height] * p_miss;
+        newGrid[row][column] = beliefs[row][column] * p_miss;
       }
     }
   }
@@ -165,21 +164,21 @@ vector< vector <float> > move(int dy, int dx,
 	float blurring) 
 {
   
-
+  vector< vector <float> > newGrid;
 	// your code here
   int height = beliefs.size();
   int width = beliefs[0].size();
-  int row, column, new_row, new_column;
+  newGrid = zeros(height, width);
+  
+  int i, j, new_i, new_j;
 
-  vector < vector <float> > newGrid = zeros(height, width);
-
-  for (row = 0; row < height; row++) {
-    for (column = 0; column < width; column++) {
-          new_row = (row + dy) % height;
-          new_column = (column + dx) % width;
-          newGrid[new_row][new_column] = beliefs[row][column];
+  for (i=0; i<height; i++) {
+    for (j=0; j<width; j++) {
+      new_i = (i + dy + height) % height;
+      new_j = (j + dx + width)  % width;
+      newGrid[new_i][new_j] = beliefs[i][j];
     }
   }
 
-	return newGrid;
+	return blur(newGrid, blurring);
 }
