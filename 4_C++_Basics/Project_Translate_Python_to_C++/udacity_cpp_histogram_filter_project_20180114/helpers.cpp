@@ -19,6 +19,37 @@
 
 using namespace std;
 
+
+/**
+    Creates a grid of zeros
+
+    For example:
+
+    zeros(2, 3) would return
+
+    0.0  0.0  0.0
+    0.0  0.0  0.0
+
+    @param height - the height of the desired grid
+
+    @param width - the width of the desired grid.
+
+    @return a grid of zeros (floats)
+*/
+vector < vector <float> > zeros(int height, int width) {
+
+	vector < vector <float> > newGrid;
+	newGrid.reserve(height);
+	vector <float> newRow;
+
+	newRow.assign(width, 0);
+	for (int i=0; i<height; i++) {
+		newGrid.push_back(newRow);
+	}
+	return newGrid;
+}
+
+
 /**
 	TODO - implement this function
 
@@ -40,6 +71,8 @@ vector< vector<float> > normalize(vector< vector <float> > grid) {
 	int width = grid[0].size();
 	int i, j;
 
+	vector< vector<float> > newGrid = zeros(height, width);
+
 	for (i = 0; i < height; i++){
 		for (j=0; j< width; j++){
 			total += grid[i][j];
@@ -48,11 +81,11 @@ vector< vector<float> > normalize(vector< vector <float> > grid) {
 
 	for (i = 0; i < height; i++) {
 		for (j=0; j< width; j++) {
-			grid[i][j] = grid[i][j] / total;
+			newGrid[i][j] = grid[i][j] / total;
 		}
 	}
 
-	return grid;
+	return newGrid;
 }
 
 /**
@@ -90,47 +123,25 @@ vector< vector<float> > normalize(vector< vector <float> > grid) {
 */
 vector < vector <float> > blur(vector < vector < float> > grid, float blurring) {
 
+	vector < vector <float> > newGrid;
 	// your code here
 	int height = grid.size();
 	int width = grid[0].size();
+	
+	float center = 1.0 - blurring;
+	float corner = blurring / 12.0;
+	float adjacent = blurring / 6.0;
+    vector < vector <float> > window = {{corner, adjacent, corner}, {adjacent, center, adjacent}, {corner, adjacent, corner}};
+	vector <int> DX = {-1, 0, 1};
+	vector <int> DY = {-1, 0, 1};
 
-	int i, j;
-	vector < vector <float> > newGrid;
-	newGrid.reserve(height);
-	vector <float> newRow;
-	newRow.reserve(width);
-
-	for (i=0; i<height; i++) {
-		newRow.clear();
-		for (j=0; j<width; j++) {
-			newRow.push_back(0.0);
-		}
-		newGrid.push_back(newRow);
-	}
-
-	static float center = 1.0 - blurring;
-	static float corner = blurring / 12.0;
-	static float adjacent = blurring / 6.0;
-  	// OPTIMIZATION: window, DX and  DY variables have the 
-    // same value each time the function is run.
-  	// It's very inefficient to recalculate the vectors
-    // every time the function runs. 
-    // Define and declare window, DX, and DY using the
-    // bracket syntax: vector<int> foo = {1, 2, 3, 4} 
-    // instead of calculating these vectors with for loops 
-    // and push back
-    static vector < vector <float> > window = {{corner, adjacent, corner}, {adjacent, center, adjacent}, {corner, adjacent, corner}};
-	static vector <int> DX = {-1, 0, 1};
-	static vector <int> DY = {-1, 0, 1};
-
-	int ii;
-	int jj;
-	int new_i;
-	int new_j;
+	int i, j, ii, jj, new_i, new_j;
 	float multiplier;
 
-	for (int i=0; i< height; i++ ) {
-		for (int j=0; j<width; j++ ) {
+	newGrid = zeros(height, width);
+
+	for (i=0; i< height; i++ ) {
+		for (j=0; j<width; j++ ) {
 			for (ii=0; ii<3; ii++) {
 				for (jj=0; jj<3; jj++) {
 					new_i = (i + DY[ii] + height) % height;
@@ -141,9 +152,8 @@ vector < vector <float> > blur(vector < vector < float> > grid, float blurring) 
 			}
 		}
 	}
-
-
 	return normalize(newGrid);
+
 }
 
 /** -----------------------------------------------
@@ -248,36 +258,7 @@ vector < vector <char> > read_map(string file_name) {
 	return map;
 }
 
-/**
-    Creates a grid of zeros
 
-    For example:
-
-    zeros(2, 3) would return
-
-    0.0  0.0  0.0
-    0.0  0.0  0.0
-
-    @param height - the height of the desired grid
-
-    @param width - the width of the desired grid.
-
-    @return a grid of zeros (floats)
-*/
-vector < vector <float> > zeros(int height, int width) {
-	int i, j;
-	vector < vector <float> > newGrid;
-	vector <float> newRow;
-
-	for (i=0; i<height; i++) {
-		newRow.clear();
-		for (j=0; j<width; j++) {
-			newRow.push_back(0.0);
-		}
-		newGrid.push_back(newRow);
-	}
-	return newGrid;
-}
 
 // int main() {
 // 	vector < vector < char > > map = read_map("maps/m1.txt");
