@@ -1,8 +1,3 @@
-'''
-> shortest_path(map_40, 5, 34)
-[5, 16, 37, 12, 34]
-'''
-
 import math
 
 def shortest_path(M,start,goal):
@@ -27,61 +22,51 @@ def shortest_path(M,start,goal):
 	# [23, 29, 32],
 	# [2, 4, 7, 22, 28, 36]]
 
-	## initialize 
+	## initialise 
 	frontier = set()
 	known = set()
 	path = []
 
 	## calculate distance between two nodes
 	def distance(i,j):
-		return math.sqrt((M.intersections[i][0] - M.intersections[j][0])**2 + (M.intersections[i][1] - M.intersections[j][1])**2)
+		return math.sqrt((M.intersections[i][0] - M.intersections[j][0])**2 + (i.y_coornidate - j.y_coornidate)**2)
 
-	## initialize start node
-	node = {}
-	node[start] = {'g': 0, 
-					'h': distance(start, goal), 
-					'f': 0 + distance(start, goal), 
-					'parent': None }
+	## initialise start node
+	start.g = 0
+	start.h = distance(start, goal)
+	start.f = start.g + start.h
+	start.parent = false
 
 	## add start to frontier
-	frontier.add(start)
+	frontier.append(start)
 
 	## choose the node with minimal f in frontier
 	def choose_search_node(frontier):
-		## get the f values of i in frontier
-		f_frontier = {}
-		for i in frontier:
-			f_frontier[i] = node[i]['f']
+		## find the minimal f in frontier
+		f_min = min(frontier.f)
 		## return the node number that has minimal f
-		return min(f_frontier, key=f_frontier.get)
+		return f_min[0]
 
 	## search the neighbors of node i with minimal f, updating g and f of it's neighbors
 	## adding neighbors to frontier, remove i from frontier to known
 	def search(i):
-		for j in M.roads[i]:
+		for j in i.neighbors:
 			## choose neighbors that is not in known
 			if j not in known:
-				## if j hasn't been searched before, initialize j
-				if j not in frontier:
-					node[j] = {'g': node[i]['g'] + distance(i, j), 
-								'h': distance(j, goal), 
-								'f': node[i]['g'] + distance(i, j) + distance(j, goal), 
-								'parent': i }
-
-				## if j has been searched, update node j if f of j is getting smaller
-				else:
-					if (node[i]['g'] + distance(i, j) + distance(j, goal)) < node[j]['f']:
-						node[j] = {'g': node[i]['g'] + distance(i, j), 
-									'h': distance(j, goal), 
-									'f': node[i]['g'] + distance(i, j) + distance(j, goal), 
-									'parent': i }
-
+				## update g(i), f(i)
+				w(ij) = distance(i, j)
+				j.g = i.g + w(ij) ## w(ij) is the distance between i and j
+				j.h = distance(j, goal)
+				j.f = j.g + j.h ## j.h is the hypothesis distance between node j and goal
+				## update j's parent node to i
+				j.parent = i
 				## add j to frontier
-				frontier.add(j)
+				if j not in frontier:
+					frontier.append(j)
 
 		## move i from frontier to known
 		frontier.remove(i)
-		known.add(i)
+		known.append(i)
 
 		return frontier, known
 
@@ -94,19 +79,29 @@ def shortest_path(M,start,goal):
 		frontier, known = search(i)
 
 		## if goal is in frontier, and goal has the minimal f, then the path is found, break the loop
-		if goal in known:
-			break
+		if goal in frontier:
+			if goal == choose_search_node(frontier):
+				frontier.remove(goal)
+				known.append(goal)
+				path.append(goal)
+				break
 
 
 	## if find a shortest path to goal, then trace back to start, return the path
-	if goal in known:
+	if i == goal:
 		i = goal
-		while i:
-			path.append(i)
-			i = node[i]['parent']
-		path.reverse()
+		while parent:
+			path.append(i.parent)
+			i = i.parent
 		return path
 
-	## if the frontier is empty, yet the goal hasn't been reached, return path not found
+	## if the frontier is empty, yet the goal hasn't been reached
 	if frontier == [] and i != goal:
 		return "path not find"
+
+
+
+
+
+    print("shortest path called")
+    return
